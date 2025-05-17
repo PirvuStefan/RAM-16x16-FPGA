@@ -1,0 +1,7 @@
+V3 3
+FL $XILINX/lab8_partea_optionala_PIRVU_STEFAN/func.vhd 2025/05/07.22:23:47 J.40
+EN work/func 1746645893 FL $XILINX/lab8_partea_optionala_PIRVU_STEFAN/func.vhd \
+      PB ieee/std_logic_1164 1192821031 PB ieee/std_logic_arith 1192821032 \
+      PB ieee/STD_LOGIC_UNSIGNED 1192821033
+AR work/func/Behavioral 1746645894 \
+      FL $XILINX/lab8_partea_optionala_PIRVU_STEFAN/func.vhd EN work/func 1746645893

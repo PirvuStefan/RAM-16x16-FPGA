@@ -1,0 +1,460 @@
+--------------------------------------------------------------------------------
+-- Copyright (c) 1995-2007 Xilinx, Inc.
+-- All Right Reserved.
+--------------------------------------------------------------------------------
+--   ____  ____ 
+--  /   /\/   / 
+-- /___/  \  /    Vendor: Xilinx 
+-- \   \   \/     Version : 9.2.04i
+--  \   \         Application : ISE
+--  /   /         Filename : tbw.ant
+-- /___/   /\     Timestamp : Wed May 07 22:27:42 2025
+-- \   \  /  \ 
+--  \___\/\___\ 
+--
+--Command: 
+--Design Name: tbw
+--Device: Xilinx
+--
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+USE IEEE.STD_LOGIC_TEXTIO.ALL;
+USE STD.TEXTIO.ALL;
+
+ENTITY tbw IS
+END tbw;
+
+ARCHITECTURE testbench_arch OF tbw IS
+    FILE RESULTS: TEXT OPEN WRITE_MODE IS "C:\Xilinx92i\lab8_partea_optionala_PIRVU_STEFAN\tbw.ano";
+
+    COMPONENT func
+        PORT (
+            iClockMem : In std_logic;
+            iWrite : In std_logic;
+            iaAdr : In std_logic_vector (3 DownTo 0);
+            iaData : In std_logic_vector (15 DownTo 0);
+            oaData : Out std_logic_vector (15 DownTo 0);
+            ioC : In std_logic
+        );
+    END COMPONENT;
+
+    SIGNAL iClockMem : std_logic := '0';
+    SIGNAL iWrite : std_logic := '0';
+    SIGNAL iaAdr : std_logic_vector (3 DownTo 0) := "0000";
+    SIGNAL iaData : std_logic_vector (15 DownTo 0) := "0000000000000000";
+    SIGNAL oaData : std_logic_vector (15 DownTo 0) := "0000000000000000";
+    SIGNAL ioC : std_logic := '0';
+
+    SHARED VARIABLE TX_ERROR : INTEGER := 0;
+    SHARED VARIABLE TX_OUT : LINE;
+
+    constant PERIOD : time := 20 ns;
+    constant DUTY_CYCLE : real := 0.5;
+    constant OFFSET : time := 0 ns;
+
+    BEGIN
+        UUT : func
+        PORT MAP (
+            iClockMem => iClockMem,
+            iWrite => iWrite,
+            iaAdr => iaAdr,
+            iaData => iaData,
+            oaData => oaData,
+            ioC => ioC
+        );
+
+        PROCESS    -- clock process for iClockMem
+        BEGIN
+            WAIT for OFFSET;
+            CLOCK_LOOP : LOOP
+                iClockMem <= '0';
+                WAIT FOR (PERIOD - (PERIOD * DUTY_CYCLE));
+                iClockMem <= '1';
+                WAIT FOR (PERIOD * DUTY_CYCLE);
+            END LOOP CLOCK_LOOP;
+        END PROCESS;
+
+        PROCESS    -- Annotation process for iClockMem
+            VARIABLE TX_TIME : INTEGER := 0;
+
+            PROCEDURE ANNOTATE_oaData(
+                TX_TIME : INTEGER
+            ) IS
+                VARIABLE TX_STR : String(1 to 4096);
+                VARIABLE TX_LOC : LINE;
+            BEGIN
+                STD.TEXTIO.write(TX_LOC, string'("Annotate["));
+                STD.TEXTIO.write(TX_LOC, TX_TIME);
+                STD.TEXTIO.write(TX_LOC, string'(", oaData, "));
+                IEEE.STD_LOGIC_TEXTIO.write(TX_LOC, oaData);
+                STD.TEXTIO.write(TX_LOC, string'("]"));
+                TX_STR(TX_LOC.all'range) := TX_LOC.all;
+                STD.TEXTIO.writeline(RESULTS, TX_LOC);
+                STD.TEXTIO.Deallocate(TX_LOC);
+            END;
+        BEGIN
+            WAIT for 1 fs;
+            ANNOTATE_oaData(0);
+            WAIT for OFFSET;
+            TX_TIME := TX_TIME + 0;
+            ANNO_LOOP : LOOP
+                --Rising Edge
+                WAIT for 10 ns;
+                TX_TIME := TX_TIME + 10;
+                ANNOTATE_oaData(TX_TIME);
+                WAIT for 10 ns;
+                TX_TIME := TX_TIME + 10;
+            END LOOP ANNO_LOOP;
+        END PROCESS;
+
+        PROCESS
+            BEGIN
+                -- -------------  Current Time:  10ns
+                WAIT FOR 10 ns;
+                ioC <= '1';
+                -- -------------------------------------
+                -- -------------  Current Time:  70ns
+                WAIT FOR 60 ns;
+                iWrite <= '1';
+                iaAdr <= "0001";
+                -- -------------------------------------
+                -- -------------  Current Time:  90ns
+                WAIT FOR 20 ns;
+                iaAdr <= "0010";
+                -- -------------------------------------
+                -- -------------  Current Time:  110ns
+                WAIT FOR 20 ns;
+                iaAdr <= "0011";
+                iaData <= "0000000000000001";
+                -- -------------------------------------
+                -- -------------  Current Time:  130ns
+                WAIT FOR 20 ns;
+                iaAdr <= "0100";
+                iaData <= "0000000000000010";
+                -- -------------------------------------
+                -- -------------  Current Time:  150ns
+                WAIT FOR 20 ns;
+                iaAdr <= "0101";
+                iaData <= "0000000000000011";
+                -- -------------------------------------
+                -- -------------  Current Time:  170ns
+                WAIT FOR 20 ns;
+                iaAdr <= "0110";
+                iaData <= "0000000000000100";
+                -- -------------------------------------
+                -- -------------  Current Time:  190ns
+                WAIT FOR 20 ns;
+                iaAdr <= "0111";
+                iaData <= "0000000000000101";
+                -- -------------------------------------
+                -- -------------  Current Time:  210ns
+                WAIT FOR 20 ns;
+                iaData <= "0000000000000110";
+                -- -------------------------------------
+                -- -------------  Current Time:  230ns
+                WAIT FOR 20 ns;
+                iWrite <= '0';
+                iaData <= "0000000000000111";
+                -- -------------------------------------
+                -- -------------  Current Time:  250ns
+                WAIT FOR 20 ns;
+                iaAdr <= "0101";
+                -- -------------------------------------
+                -- -------------  Current Time:  270ns
+                WAIT FOR 20 ns;
+                iaAdr <= "1100";
+                -- -------------------------------------
+                -- -------------  Current Time:  290ns
+                WAIT FOR 20 ns;
+                iaAdr <= "1001";
+                -- -------------------------------------
+                -- -------------  Current Time:  310ns
+                WAIT FOR 20 ns;
+                iaAdr <= "0001";
+                iaData <= "1111111111111111";
+                -- -------------------------------------
+                -- -------------  Current Time:  330ns
+                WAIT FOR 20 ns;
+                ioC <= '0';
+                iaAdr <= "1110";
+                iaData <= "1111111111111110";
+                -- -------------------------------------
+                -- -------------  Current Time:  350ns
+                WAIT FOR 20 ns;
+                iaAdr <= "0111";
+                iaData <= "1111111111111101";
+                -- -------------------------------------
+                -- -------------  Current Time:  370ns
+                WAIT FOR 20 ns;
+                ioC <= '1';
+                iaData <= "1111111111111100";
+                -- -------------------------------------
+                -- -------------  Current Time:  390ns
+                WAIT FOR 20 ns;
+                iaAdr <= "1010";
+                iaData <= "1111111111111011";
+                -- -------------------------------------
+                -- -------------  Current Time:  410ns
+                WAIT FOR 20 ns;
+                iaData <= "1111111111111010";
+                -- -------------------------------------
+                -- -------------  Current Time:  430ns
+                WAIT FOR 20 ns;
+                iaData <= "1111111111111001";
+                -- -------------------------------------
+                -- -------------  Current Time:  450ns
+                WAIT FOR 20 ns;
+                iaData <= "1111111111111000";
+                -- -------------------------------------
+                -- -------------  Current Time:  470ns
+                WAIT FOR 20 ns;
+                iaAdr <= "0101";
+                -- -------------------------------------
+                -- -------------  Current Time:  490ns
+                WAIT FOR 20 ns;
+                iWrite <= '1';
+                iaAdr <= "1100";
+                -- -------------------------------------
+                -- -------------  Current Time:  510ns
+                WAIT FOR 20 ns;
+                ioC <= '0';
+                iaAdr <= "1001";
+                iaData <= "1111111111111111";
+                -- -------------------------------------
+                -- -------------  Current Time:  530ns
+                WAIT FOR 20 ns;
+                iWrite <= '0';
+                ioC <= '1';
+                iaAdr <= "0001";
+                iaData <= "1111111111111110";
+                -- -------------------------------------
+                -- -------------  Current Time:  550ns
+                WAIT FOR 20 ns;
+                iaAdr <= "1110";
+                iaData <= "1111111111111101";
+                -- -------------------------------------
+                -- -------------  Current Time:  570ns
+                WAIT FOR 20 ns;
+                iaAdr <= "0111";
+                iaData <= "1111111111111100";
+                -- -------------------------------------
+                -- -------------  Current Time:  590ns
+                WAIT FOR 20 ns;
+                iaData <= "1111111111111011";
+                -- -------------------------------------
+                -- -------------  Current Time:  610ns
+                WAIT FOR 20 ns;
+                iaAdr <= "1010";
+                iaData <= "1111111111111010";
+                -- -------------------------------------
+                -- -------------  Current Time:  630ns
+                WAIT FOR 20 ns;
+                ioC <= '0';
+                iaData <= "1111111111111001";
+                -- -------------------------------------
+                -- -------------  Current Time:  650ns
+                WAIT FOR 20 ns;
+                iaAdr <= "0000";
+                iaData <= "1111111111111000";
+                -- -------------------------------------
+                -- -------------  Current Time:  670ns
+                WAIT FOR 20 ns;
+                ioC <= '1';
+                iaAdr <= "0001";
+                -- -------------------------------------
+                -- -------------  Current Time:  690ns
+                WAIT FOR 20 ns;
+                iWrite <= '1';
+                iaAdr <= "0010";
+                -- -------------------------------------
+                -- -------------  Current Time:  710ns
+                WAIT FOR 20 ns;
+                iaAdr <= "0011";
+                -- -------------------------------------
+                -- -------------  Current Time:  730ns
+                WAIT FOR 20 ns;
+                iWrite <= '0';
+                iaAdr <= "0100";
+                -- -------------------------------------
+                -- -------------  Current Time:  750ns
+                WAIT FOR 20 ns;
+                iaAdr <= "0101";
+                -- -------------------------------------
+                -- -------------  Current Time:  770ns
+                WAIT FOR 20 ns;
+                iWrite <= '1';
+                iaAdr <= "0110";
+                iaData <= "1111111111111111";
+                -- -------------------------------------
+                -- -------------  Current Time:  790ns
+                WAIT FOR 20 ns;
+                iaAdr <= "0111";
+                iaData <= "1111111111111110";
+                -- -------------------------------------
+                -- -------------  Current Time:  810ns
+                WAIT FOR 20 ns;
+                iWrite <= '0';
+                iaData <= "1111111111111101";
+                -- -------------------------------------
+                -- -------------  Current Time:  830ns
+                WAIT FOR 20 ns;
+                iaData <= "1111111111111100";
+                -- -------------------------------------
+                -- -------------  Current Time:  850ns
+                WAIT FOR 20 ns;
+                iaData <= "1111111111111011";
+                -- -------------------------------------
+                -- -------------  Current Time:  870ns
+                WAIT FOR 20 ns;
+                ioC <= '0';
+                iaData <= "1111111111111010";
+                -- -------------------------------------
+                -- -------------  Current Time:  890ns
+                WAIT FOR 20 ns;
+                iaData <= "1111111111111001";
+                -- -------------------------------------
+                -- -------------  Current Time:  910ns
+                WAIT FOR 20 ns;
+                iaData <= "1111111111111000";
+                -- -------------------------------------
+                -- -------------  Current Time:  930ns
+                WAIT FOR 20 ns;
+                ioC <= '1';
+                iaAdr <= "0000";
+                iaData <= "1100100000111111";
+                -- -------------------------------------
+                -- -------------  Current Time:  950ns
+                WAIT FOR 20 ns;
+                iaAdr <= "0001";
+                iaData <= "1001000110110011";
+                -- -------------------------------------
+                -- -------------  Current Time:  970ns
+                WAIT FOR 20 ns;
+                iaAdr <= "0010";
+                iaData <= "0001110110111001";
+                -- -------------------------------------
+                -- -------------  Current Time:  990ns
+                WAIT FOR 20 ns;
+                iWrite <= '1';
+                iaAdr <= "0011";
+                iaData <= "1110101000110001";
+                -- -------------------------------------
+                -- -------------  Current Time:  1010ns
+                WAIT FOR 20 ns;
+                iaAdr <= "0100";
+                iaData <= "0111001100011001";
+                -- -------------------------------------
+                -- -------------  Current Time:  1030ns
+                WAIT FOR 20 ns;
+                iaAdr <= "0101";
+                iaData <= "0111010000010101";
+                -- -------------------------------------
+                -- -------------  Current Time:  1050ns
+                WAIT FOR 20 ns;
+                iWrite <= '0';
+                iaAdr <= "0110";
+                iaData <= "1010100010010101";
+                -- -------------------------------------
+                -- -------------  Current Time:  1070ns
+                WAIT FOR 20 ns;
+                iaAdr <= "0111";
+                -- -------------------------------------
+                -- -------------  Current Time:  1130ns
+                WAIT FOR 60 ns;
+                ioC <= '0';
+                iaAdr <= "0000";
+                -- -------------------------------------
+                -- -------------  Current Time:  1150ns
+                WAIT FOR 20 ns;
+                iaAdr <= "0001";
+                iaData <= "0000000000000001";
+                -- -------------------------------------
+                -- -------------  Current Time:  1170ns
+                WAIT FOR 20 ns;
+                iaAdr <= "0010";
+                -- -------------------------------------
+                -- -------------  Current Time:  1190ns
+                WAIT FOR 20 ns;
+                ioC <= '1';
+                iaAdr <= "0011";
+                -- -------------------------------------
+                -- -------------  Current Time:  1210ns
+                WAIT FOR 20 ns;
+                iaAdr <= "0100";
+                -- -------------------------------------
+                -- -------------  Current Time:  1230ns
+                WAIT FOR 20 ns;
+                iaAdr <= "0101";
+                -- -------------------------------------
+                -- -------------  Current Time:  1250ns
+                WAIT FOR 20 ns;
+                iaAdr <= "0110";
+                -- -------------------------------------
+                -- -------------  Current Time:  1270ns
+                WAIT FOR 20 ns;
+                iWrite <= '1';
+                iaAdr <= "0111";
+                iaData <= "0101111100100111";
+                -- -------------------------------------
+                -- -------------  Current Time:  1290ns
+                WAIT FOR 20 ns;
+                iWrite <= '0';
+                iaData <= "1100100000111111";
+                -- -------------------------------------
+                -- -------------  Current Time:  1310ns
+                WAIT FOR 20 ns;
+                ioC <= '0';
+                iaData <= "1001000110110011";
+                -- -------------------------------------
+                -- -------------  Current Time:  1330ns
+                WAIT FOR 20 ns;
+                iaData <= "0001110110111001";
+                -- -------------------------------------
+                -- -------------  Current Time:  1350ns
+                WAIT FOR 20 ns;
+                iWrite <= '1';
+                iaData <= "1110101000110001";
+                -- -------------------------------------
+                -- -------------  Current Time:  1370ns
+                WAIT FOR 20 ns;
+                iWrite <= '0';
+                ioC <= '1';
+                iaData <= "0111001100011001";
+                -- -------------------------------------
+                -- -------------  Current Time:  1390ns
+                WAIT FOR 20 ns;
+                iaData <= "0111010000010101";
+                -- -------------------------------------
+                -- -------------  Current Time:  1410ns
+                WAIT FOR 20 ns;
+                iWrite <= '1';
+                ioC <= '0';
+                iaData <= "1010100010010101";
+                -- -------------------------------------
+                -- -------------  Current Time:  1430ns
+                WAIT FOR 20 ns;
+                iWrite <= '0';
+                ioC <= '1';
+                -- -------------------------------------
+                -- -------------  Current Time:  1450ns
+                WAIT FOR 20 ns;
+                ioC <= '0';
+                -- -------------------------------------
+                -- -------------  Current Time:  1470ns
+                WAIT FOR 20 ns;
+                ioC <= '1';
+                -- -------------------------------------
+                WAIT FOR 50 ns;
+
+                STD.TEXTIO.write(TX_OUT, string'("Total[]"));
+                STD.TEXTIO.writeline(RESULTS, TX_OUT);
+                ASSERT (FALSE) REPORT
+                    "Success! Simulation for annotation completed"
+                    SEVERITY FAILURE;
+            END PROCESS;
+
+    END testbench_arch;
+
