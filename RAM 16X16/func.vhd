@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------
 -- Company: CR 1.3
--- Engineer: PIRVU STEFAN
+-- Engineer: 
 -- 
 -- Create Date:    21:58:28 05/07/2025 
 -- Design Name: 
@@ -8,10 +8,10 @@
 -- Project Name: 
 -- Target Devices: 
 -- Tool versions: 
--- Description: S? se modeleze func?ional în VHDL ?i s? se verifice prin
--- simulare o memorie RAM static sincron? cu organizarea 16x16.
--- Comanda de scriere ?i comanda de control a ie?irii sunt active în logic?
--- negativ? iar tactul este activ pe front pozitiv.
+-- Description: Sa se modeleze functional Ã®n VHDL si sa se verifice prin
+-- simulare o memorie RAM static sincrona cu organizarea 16x16.
+-- Comanda de scriere si comanda de control a ie?irii sunt active Ã®n logica
+-- negativa iar tactul este activ pe front pozitiv.
 --
 -- Dependencies: 
 --
